@@ -3,8 +3,6 @@ import { all, takeLatest, call, put, race, delay } from 'redux-saga/effects';
 import api from '../../../services/api';
 import { updateProfileSuccess, updateProfileFailure } from './actions';
 
-import { timer } from '../../utils';
-
 export function* updateProfile({ payload }) {
     try {
         const {
@@ -27,7 +25,7 @@ export function* updateProfile({ payload }) {
 
         const { response } = yield race({
             response: call(api.put, 'user', profile),
-            timer,
+            timeout: delay(10000),
         });
 
         yield put(updateProfileSuccess(response.data));

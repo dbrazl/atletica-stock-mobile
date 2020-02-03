@@ -6,29 +6,31 @@ import {
     DirectorSwitchNavigator,
 } from './navigators';
 
-selectBottomMenu = (isSigned, personality) => {
-    if (isSigned && personality === 'director') {
-        return 'Director';
-    }
+import NoInternet from '../pages/NoInternet';
 
-    if (isSigned) {
-        return 'User';
-    }
-
+selectBottomMenu = (isSigned, personality, isConnected) => {
+    if (!isConnected) return 'NoInternet';
+    if (isSigned && personality === 'director') return 'Director';
+    if (isSigned) return 'User';
     return 'Sign';
 };
 
-navigation = (isSigned, personality) =>
+navigation = (isSigned, personality, isConnected) =>
     createSwitchNavigator(
         {
+            NoInternet,
             Sign: SignSwitchNavigator,
             User: UserSwitchNavigator,
             Director: DirectorSwitchNavigator,
         },
         {
-            initialRouteName: selectBottomMenu(isSigned, personality),
+            initialRouteName: selectBottomMenu(
+                isSigned,
+                personality,
+                isConnected
+            ),
         }
     );
 
-export default (isSigned = false, personality = 'user') =>
-    createAppContainer(navigation(isSigned, personality));
+export default (isSigned = false, personality = 'user', isConnected = true) =>
+    createAppContainer(navigation(isSigned, personality, isConnected));

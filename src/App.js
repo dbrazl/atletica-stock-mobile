@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import NetInfo from '@react-native-community/netinfo';
 
 import { useSelector } from 'react-redux';
 
@@ -9,7 +10,17 @@ export default function App() {
     const profile = useSelector(state => state.user.profile);
     const personality = profile ? profile.personality : null;
 
-    const Routes = createRouter(signed, personality);
+    const [isConnected, setIsConnected] = useState(true);
+
+    useEffect(() => {
+        const unsubscribe = NetInfo.addEventListener(state =>
+            setIsConnected(state.isConnected)
+        );
+
+        return () => unsubscribe();
+    }, [isConnected]);
+
+    const Routes = createRouter(signed, personality, isConnected);
 
     return <Routes />;
 }

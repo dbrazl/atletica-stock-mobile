@@ -1,14 +1,9 @@
 import styled from 'styled-components/native';
+import { primaryColor } from '../../../utils';
 
 export const Container = styled.View`
     flex: 1;
-    background-color: #4776ee;
+    background-color: ${primaryColor};
     justify-content: center;
     align-items: center;
-`;
-
-export const BigText = styled.Text`
-    color: #fff;
-    font-size: 25px;
-    font-family: 'Nunito-Regular';
 `;

@@ -1,4 +1,4 @@
-import { takeLatest, put, call, all, race } from 'redux-saga/effects';
+import { takeLatest, put, call, all, race, delay } from 'redux-saga/effects';
 
 import api from '../../../services/api';
 
@@ -9,8 +9,6 @@ import {
     signUpSuccess,
 } from './actions';
 
-import { timer } from '../../utils';
-
 export function* signIn({ payload }) {
     try {
         const { username, password } = payload;
@@ -20,8 +18,10 @@ export function* signIn({ payload }) {
                 username,
                 password,
             }),
-            timer,
+            timeout: delay(10000),
         });
+
+        if (!response) throw { errorMessage: 'TIMEOUT_ERROR' };
 
         const { token, user } = response.data;
 
@@ -29,7 +29,16 @@ export function* signIn({ payload }) {
 
         yield put(signInSuccess(token, user));
     } catch (error) {
-        const errorMessage = error.message;
+        let errorMessage;
+
+        if (error.response) {
+            errorMessage = JSON.parse(error.response.request._response).error;
+        }
+
+        if (!errorMessage) {
+            errorMessage = 'Tempo de requisição ao servidor foi excedido!';
+        }
+
         yield put(signFailure(errorMessage));
     }
 }
@@ -38,21 +47,31 @@ export function* signUp({ payload }) {
     try {
         const { username, email, password, personality } = payload;
 
-        yield race({
-            response: call(api.post, 'user', {
+        const { response } = yield race({
+            response: call(api.post, 'users', {
                 username,
                 email,
                 password,
                 personality,
             }),
-            timer,
+            timeout: delay(10000),
         });
 
+        if (!response) throw { errorMessage: 'TIMEOUT_ERROR' };
+
         yield put(signUpSuccess());
-    } catch (err) {
-        // eslint-disable-next-line no-underscore-dangle
-        const error = JSON.parse(err.response.request._response);
-        yield put(signFailure(error.error));
+    } catch (error) {
+        let errorMessage;
+
+        if (error.response) {
+            errorMessage = JSON.parse(error.response.request._response).error;
+        }
+
+        if (!errorMessage) {
+            errorMessage = 'Tempo de requisição ao servidor foi excedido!';
+        }
+
+        yield put(signFailure(errorMessage));
     }
 }
 
@@ -68,20 +87,31 @@ export function setToken({ payload }) {
 
 export function* restoreAccount({ payload }) {
     try {
-        const { email } = payload;
+        const { username, email } = payload;
 
-        yield race({
-            response: yield call(api.put, 'user/restore', {
+        const { response } = yield race({
+            response: yield call(api.put, 'restore', {
+                username,
                 email,
             }),
-            timer,
+            timeout: delay(10000),
         });
 
+        if (!response) throw { errorMessage: 'TIMEOUT_ERROR' };
+
         yield put(restoreAccountSuccess());
-    } catch (err) {
-        // eslint-disable-next-line no-underscore-dangle
-        const error = JSON.parse(err.response.request._response);
-        yield put(signFailure(error.error));
+    } catch (error) {
+        let errorMessage;
+
+        if (error.response) {
+            errorMessage = JSON.parse(error.response.request._response).error;
+        }
+
+        if (!errorMessage) {
+            errorMessage = 'Tempo de requisição ao servidor foi excedido!';
+        }
+
+        yield put(signFailure(errorMessage));
     }
 }
 

@@ -4,6 +4,7 @@ const INITIAL_STATE = {
     token: null,
     signed: false,
     loading: false,
+    success: false,
     error: false,
     errorMessage: '',
 };
@@ -52,6 +53,15 @@ export default function auth(state = INITIAL_STATE, action) {
             case '@auth/SIGN_OUT': {
                 draft.signed = false;
                 draft.token = null;
+                break;
+            }
+            case '@auth/RESET_ERROR': {
+                draft.error = false;
+                draft.errorMessage = '';
+                break;
+            }
+            case '@auth/RESET_SUCCESS': {
+                draft.success = false;
                 break;
             }
             default:

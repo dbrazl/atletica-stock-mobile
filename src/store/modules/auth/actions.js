@@ -50,3 +50,15 @@ export function restoreAccountSuccess() {
         type: '@auth/RESTORE_ACCOUNT_SUCCESS',
     };
 }
+
+export function resetError() {
+    return {
+        type: '@auth/RESET_ERROR',
+    };
+}
+
+export function resetSuccess() {
+    return {
+        type: '@auth/RESET_SUCCESS',
+    };
+}

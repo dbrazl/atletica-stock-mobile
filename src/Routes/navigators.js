@@ -1,23 +1,36 @@
 import { createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import createAnimatedSwitchNavigator from 'react-navigation-animated-switch';
 
-import { deliveryNavigateOption, tabBarOptions } from './options';
+import { tabBarOptions } from './options';
+import { authTransition } from './transitions';
 
-import SignIn from '../pages/SignIn';
+import SplashArt from '../pages/SplashArt';
+import SignIn from '../pages/Auth/SignIn';
+import SignLoading from '../pages/Auth/Loading';
+import SignError from '../pages/Auth/SignError';
 
-export const SignSwitchNavigator = createSwitchNavigator({
-    SignIn,
-});
+import ProductList from '../pages/App/ProductList';
+import Account from '../pages/App/Account';
+
+export const SignSwitchNavigator = createAnimatedSwitchNavigator(
+    {
+        Account,
+        ProductList,
+        SplashArt,
+        SignIn,
+        SignLoading,
+        SignError,
+    },
+    {
+        transition: authTransition(),
+    }
+);
 
 export const UserSwitchNavigator = createBottomTabNavigator(
     {
+        SplashArt,
         SignIn,
-        // Delivery: {
-        //     screen: productNavigate(),
-        //     navigationOptions: deliveryNavigateOption,
-        // },
-        // NewRequest,
-        // Profile,
     },
     {
         tabBarOptions,
@@ -38,10 +51,3 @@ export const DirectorSwitchNavigator = createBottomTabNavigator(
         tabBarOptions,
     }
 );
-
-productNavigate = () => {
-    return createSwitchNavigator({
-        // Delivery,
-        // Product,
-    });
-};
